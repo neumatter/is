@@ -1,5 +1,7 @@
 
-declare export default class IS {
+declare module '@neumatter/is'
+
+declare class IS {
   /**
    *
    * @param {*} input
@@ -105,3 +107,5 @@ declare export default class IS {
    */
   static falseType: (input:any) => boolean
 }
+
+export = IS

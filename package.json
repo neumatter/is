@@ -1,6 +1,6 @@
 {
   "name": "@neumatter/is",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Module for type checking in javascript.",
   "type": "module",
   "author": "Cal Young",
@@ -16,7 +16,11 @@
     "javascript",
     "node"
   ],
-  "main": "./index.js",
+  "main": "./index.cjs",
+  "exports": {
+    "import": "./index.js",
+    "require": "./index.cjs"
+  },
   "types": "./types/index.d.ts",
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
@@ -28,6 +32,9 @@
     }
   },
   "standard": {
-    "parser": "@babel/eslint-parser"
+    "parser": "@babel/eslint-parser",
+    "ignore": [
+      "/types"
+    ]
   }
 }
