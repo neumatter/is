@@ -35,23 +35,30 @@ function toDeepType (input = 'Default', type) {
   return map[type] || null
 }
 
+/** @type {import('./types/index').NeuType} */
 export class NeuType {
   #proto
   #creator
   #builtin
   #deeptype
   #custom
-  constructor (input, { shallow = false }) {
+  constructor (input, options) {
     const basejs = toBuiltinType(input)
-    if (shallow) {
+    options = options || {}
+    if (options.shallow) {
       this.#proto = null
-      this.#builtin = basejs
+      this.#builtin = basejs === 'AsyncFunction' ? 'Function' : basejs
       this.#deeptype = null
       this.#custom = null
     } else {
       this.#proto = input?.constructor?.prototype || null
-      this.#builtin = basejs
-      this.#deeptype = toDeepType(input, basejs) || null
+      if (basejs === 'AsyncFunction') {
+        this.#builtin = 'Function'
+        this.#deeptype = 'AsyncFunction'
+      } else {
+        this.#builtin = basejs
+        this.#deeptype = toDeepType(input, basejs) || null
+      }
       this.#custom = toCustomType(input, basejs) || null
       if (/Function\[[a-zA-Z]+]/.test(this.tag)) {
         this.#creator = input
@@ -121,6 +128,7 @@ export function typeOf (input) {
   return new NeuType(input)
 }
 
+/** @type {import('./types/index').IS} */
 export default class IS {
   static toType = (input) => {
     return toBuiltinType(input)
@@ -261,6 +269,15 @@ export default class IS {
    * @param {*} input
    * @returns {boolean}
    */
+  static regex (input) {
+    return new NeuType(input, { shallow: true }).is('RegExp')
+  }
+
+  /**
+   *
+   * @param {*} input
+   * @returns {boolean}
+   */
   static emptyArray = input => {
     return new NeuType(input, { shallow: true }).is('Array') && !input.length
   }
@@ -278,50 +295,4 @@ export default class IS {
       IS.emptyArray(input)
     )
   }
-}
-
-console.log(new NeuType(IS.array).tag)
-console.log(new NeuType({}).tag)
-console.log(new NeuType(Date.now()).tag)
-console.log(new NeuType([{ hello: 'world' }]).tag)
-console.log(new NeuType('').tag)
-console.log(new NeuType(null).tag)
-console.log(new NeuType(NaN).tag)
-console.log(new NeuType(Promise).tag)
-console.log(new NeuType(NeuType).tag)
-const neutype = new NeuType(Promise)
-console.log(`${neutype}`)
-console.log('' + neutype)
-console.log(neutype)
-
-
-function toCharCodesAt(str, id) {
-  id = id || 0
-  const code = str.charCodeAt(id)
-  if (0xD800 <= code && code <= 0xDBFF) {
-    let hi = code
-    let low = str.charCodeAt(id + 1)
-    if (isNaN(low)) {
-      throw 'High surrogate not followed by ' +
-        'low surrogate in fixedCharCodeAt()'
-    }
-    return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000
-  }
-  if (0xDC00 <= code && code <= 0xDFFF) return false
-  return code
-}
-
-function toCharCodes (input) {
-  if (!input.length) return ''
-  const charCodes = []
-  const { length } = input
-  let index = -1
-  while (++index < length) {
-    const code = toCharCodesAt(input, index)
-    if (code === false) continue
-    charCodes.push(code)
-    // if (code <= 127) charCodes.push(code)
-    if (index >= 100) return charCodes.join(' ')
-  }
-  return charCodes.join(' ')
 }
