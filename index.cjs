@@ -128,11 +128,11 @@ function typeOf (input) {
 }
 
 class IS {
-  static toType = (input) => {
+  static toType (input) {
     return toBuiltinType(input)
   }
 
-  static instance = (input, instance) => {
+  static instance (input, instance) {
     return new NeuType(input).instance(instance)
   }
 
@@ -141,7 +141,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static array = input => {
+  static array (input) {
     return IS.toType(input) === 'Array'
   }
 
@@ -150,7 +150,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static object = input => {
+  static object (input) {
     return IS.toType(input) === 'Object'
   }
 
@@ -159,7 +159,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static emptyObject = input => {
+  static emptyObject (input) {
     return IS.toType(input) === 'Object' && !Object.keys(input).length
   }
 
@@ -168,7 +168,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static string = input => {
+  static string (input) {
     return IS.toType(input) === 'String'
   }
 
@@ -177,7 +177,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static emptyString = input => {
+  static emptyString (input) {
     return input === ''
   }
 
@@ -186,7 +186,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static boolean = input => {
+  static boolean (input) {
     return new NeuType(input, { shallow: true }).is('Boolean')
   }
 
@@ -195,7 +195,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static number = input => {
+  static number (input) {
     return new NeuType(input, { shallow: true }).is('Number')
   }
 
@@ -204,7 +204,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static null = input => {
+  static null (input) {
     return new NeuType(input, { shallow: true }).is('Null')
   }
 
@@ -213,7 +213,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static NaN = input => {
+  static NaN (input) {
     return new NeuType(input).tag === 'Number[NaN]'
   }
 
@@ -222,7 +222,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static infinite = input => {
+  static infinite (input) {
     return new NeuType(input).is('Infinite')
   }
 
@@ -231,7 +231,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static date = input => {
+  static date (input) {
     return new NeuType(input, true).is('Date')
   }
 
@@ -240,7 +240,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static undefined = input => {
+  static undefined (input) {
     return new NeuType(input, { shallow: true }).is('Undefined')
   }
 
@@ -249,7 +249,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static function = input => {
+  static function (input) {
     return new NeuType(input, { shallow: true }).is('Function')
   }
 
@@ -258,7 +258,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static symbol = input => {
+  static symbol (input) {
     return new NeuType(input, { shallow: true }).is('Symbol')
   }
 
@@ -267,7 +267,16 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static emptyArray = input => {
+  static regex (input) {
+    return new NeuType(input, { shallow: true }).is('RegExp')
+  }
+
+  /**
+   *
+   * @param {*} input
+   * @returns {boolean}
+   */
+  static emptyArray (input) {
     return new NeuType(input, { shallow: true }).is('Array') && !input.length
   }
 
@@ -276,7 +285,7 @@ class IS {
    * @param {*} input
    * @returns {boolean}
    */
-  static falseType = input => {
+  static falseType (input) {
     return (
       IS.null(input) ||
       IS.undefined(input) ||
